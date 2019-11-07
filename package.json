@@ -1,0 +1,18 @@
+{
+  "name": "node_project",
+  "version": "1.0.0",
+  "description": "final project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "suraj shah",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.7.8",
+    "nodemon": "^1.19.4",
+    "pug": "^2.0.4"
+  }
+}
