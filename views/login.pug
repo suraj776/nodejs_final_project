@@ -1,16 +1,11 @@
 doctype html
 head
   //
-    ===============================================
-    Template Design By WpFreeware Team.
-    Author URI : http://www.wpfreeware.com/
-    ====================================================
-  //
     Basic Page Needs
     ==================================================
   meta(charset='utf-8')
   meta(http-equiv='X-UA-Compatible' content='IE=edge')
-  title AUI Degree : Contact
+  title AUI: Contact
   //
     Mobile Specific Metas
     ==================================================
@@ -133,7 +128,7 @@ head
     width: 100%;
     border: none;
     background: 3D3B31;
-    color: #FFF;
+    color: 232928;
     margin: 0 0 5px;
     padding: 10px;
     font-size: 15px;
@@ -207,13 +202,13 @@ section#imgBanner
   h2 Contact
 // =========== END COURSE BANNER SECTION ================
 .form
-  form#contact(action='' method='post')
+  form#contact(action='/login' method='post')
     h3 Login
 
     fieldset
       input(placeholder='Your Email Address' type='email' tabindex='2' required='')
     fieldset
-      input(placeholder='Your Password' type='url' tabindex='4' required='')
+      input(placeholder='Your Password' type='text' tabindex='4' required='')
     fieldset
       button#contact-submit(name='submit' type='submit' data-submit='...Sending') LogIn
 // =========== BEGIN FOOTER SECTION ================

@@ -1649,3 +1649,8 @@ div[data-dimension] {
 
 	
 }
+.myheaddead:hover
+{
+  box-shadow: 3px 18px 17px #909090;
+  transition: 0.5s ease;
+}

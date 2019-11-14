@@ -1,10 +1,19 @@
 const express=require('express');
 const path=require('path');
 const mongoose=require('mongoose');
+const mongo=require('mongodb');
 const bodyParser=require('body-parser');
+const expressValidator=require('express-Validator');
+const flash=require('connect-flash');
+const session= require('express-session');
+const passport=require('passport');
+const config= require('./config/database');
 
-mongoose.connect('mongodb://localhost/db_user',{useUnifiedTopology:true});
+
+mongoose.connect(config.database);
 var db=mongoose.connection;
+db.dropDatabase();
+var url='mongodb://localhost:27017/db_user';
 
 //Check Connection
 db.once('open',function(){
@@ -23,7 +32,7 @@ const app=express();
 // var Products=require('./models/products')
 
 //Include Users Model
-var User=require('./models/users')
+var User=require('./models/user')
 
 // //Include Cart Model
 // var Cart=require('./models/cart')
@@ -61,111 +70,115 @@ app.get('/about_us',function(req,res){
 app.get('/register',function(req,res){
 		res.render('register')
 });
-app.get('/login',function(req,res){
-		res.render('login')
-});
-// app.get('/home',function(req,res){
-// 		res.send('index')
-// });
 
-// app.get('/home',function(req,res){
-// 		res.send('index')
-// });
 
-// app.post('/process', function(req,res){ 
-// 	var email = req.body.email;
-//     var password = req.body.password;
-//     db.collection('users').findOne({email:email,password:password},function(err, users){ 
-//         if (err){
-//         	console.log(err);
-//         } 
-//         else
-//         {
-//         	if(email=='admin@email.com')
-//         	{
-//         		res.render('upload',{
-// 				});
-//         	}
-//         	else
-//         	{
-//         		res.render('home',{
-// 				});
-//         	}
-//         }
-              
-//     }); 
-
-// });
-
-// //Game Page Route With Unique Product By Fetching ID
-// app.get('/game:id',function(req,res){
-// 	Products.findById(req.params.id,function(err,products){
-// 		res.render('game',{
-// 			products:products
-// 		});
-// 	});
-
-// });
-
-// // Cart Page Route
-// app.get('/cart',function(req,res){
-// 	Cart.find({},function(err,cart){
-// 	if(err){
-// 		console.log(err);
-// 	}
-// 	else{
-// 			console.log(cart)
-// 		//To Get all data From Products collection
-// 		res.render('cart',{
-// 			products_2:cart
-// 		});//Rendering The Index Page and sending data	
-// 	}	
-	
-// 	});
-	
-// });
-
-// //Add Product Route Code
-// app.post('/upload',function(req,res){
-// 	var products=new Products();
-// 	products.name=req.body.name;
-// 	products.publisher=req.body.publisher;
-// 	products.price=req.body.price;
-// 	products.desc=req.body.desc;
-// 	products.category=req.body.category;
-// 	products.image=req.body.image;
-// 	products.save(function(err){
-// 		if(err){
-// 			console.log(err);
-// 			return;
-// 		}
-// 		else{
-// 			res.redirect('/home')
-// 		}
-// 	});
-      
-// });
-
-//Add Product Route Code
+//Add  user Code
 app.post('/adduser',function(req,res){
-	var users=new User();
-	users.fname=req.body.fname;
-	users.email=req.body.email;
-	users.password=req.body.password;
-	users.save(function(err){
+	var user=new User();
+	user.username=req.body.name;
+	user.email=req.body.email;
+	user.password=req.body.password;
+	user.save(function(err){
 		if(err){
 			console.log(err);
 			return;
 		}
 		else{
-			console.log("added")
+			console.log(user)
 			res.redirect('/')
 		}
 	});
       
 });
+app.use(
+  session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+  })
+);
+//passport config
 
+require('./config/passport')(passport);
+//passport middleware
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+//mongodb
+// app.post('/assuser',function(req,res){
+// 	var item= {
+// 		username:req.body.name,
+// 		email:req.body.email,
+// 		password:req.body.password
+// 	};
+// 	mongo.connect(url,function(err, db){
+// 		assert.equal(null, err);
+// 		db.collection('db_user').insertOne(item, function(err, result){
+// 			 assert.equal(null, err);
+//       console.log('Item inserted');
+//       db.close();
+// 		});
+// 	});
+// 	res.redirect('/');
+// });
+
+
+// app.get('/seeadmin',function(req,res){
+// 	var result=[];
+// 	mongo.connect(url,function(err,db){
+// 		assert.equal(null,err);
+// 		var cursor=db.collection('users').find();
+// 		cursor.forEach(function(doc,err){
+// 			assert.equal(null,err);
+// 			result.push(doc);
+// 		},function(){
+// 			db.close();
+// 			res.render('index',{item:result});
+// 		});
+// 	});
+
+// });
+
+app.get('/admin',function(req,res){
+	User.find({},function(err,users){
+	if(err){
+		console.log(err);
+	}
+	else{	console.log('data gaya ')
+			//To Get all data From Products collection
+			res.render('admin',{
+				title:users,
+				users:users
+			});//Rendering The Index Page and sending data	
+	    }	
+	
+	});
+	
+});
+app.get('/admin',function(req,res){
+		res.render('admin')
+});
+app.use(flash());
+
+//login process
+app.post('/login',function(req, res, next){
+	passport.authenticate('local',{
+		successRedirect:'/',
+		failureRedirect:'login',
+		failureFlash:true
+	})(req,res,next);
+})
+// router.get('/logout', (req, res) => {
+//   req.logout();
+//   req.flash('success_msg', 'You are logged out');
+//   res.redirect('/users/login');
+// });
+
+app.get('/login',function(req,res){
+		res.render('login')
+});
 //Start Server
 app.listen(3000,function(){
 	console.log("Running At 3000");
+
 })

@@ -9,10 +9,18 @@
   "author": "suraj shah",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
     "express": "^4.17.1",
-    "mongoose": "^5.7.8",
+    "express-session": "^1.17.0",
+    "express-validator": "^6.2.0",
+    "mongodb": "^3.3.4",
+    "mongoose": "^5.7.10",
     "nodemon": "^1.19.4",
-    "pug": "^2.0.4"
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.4",
+    "validator": "^12.0.0"
   }
 }
